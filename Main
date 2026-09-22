@@ -154,13 +154,30 @@ task.spawn(function()
 			end
 		end
 	end
-  task.wait(3)
-  --// Load all scripts \\--
-  loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/LoadUI"))() -- LoadUI
-  loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/ActivateSolver"))() -- ActivateSolver
-  -- loadstring(game:HttpGet(""))() -- AnimationHandler
-  -- loadstring(game:HttpGet(""))() -- Choke Skill
-  -- loadstring(game:HttpGet(""))() -- Fling Skill
-  -- loadstring(game:HttpGet(""))() -- [NULL]
-
 end)
+
+--// 6. MAIN SCRIPT DEPLOYMENT HUB \\--
+-- This block executes cleanly outside of your tracker thread loops!
+task.wait(3)
+print("[Absolute Solver] Pre-loading all pipeline scripts...")
+
+local function safeLoad(url, name)
+	local success, err = pcall(function()
+		loadstring(game:HttpGet(url))()
+	end)
+	if success then
+		print("[Absolute Solver] Loaded script smoothly: " .. name)
+	else
+		warn("[Absolute Solver] Failed to execute module (" .. name .. "): " .. tostring(err))
+	end
+end
+
+-- Execute your core system links sequentially
+safeLoad("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/LoadUI", "LoadUI")
+safeLoad("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/ActivateSolver", "ActivateSolver")
+
+-- FUTURE EXPANSIONS (Uncomment and add links here when you build them!)
+-- safeLoad("https://githubusercontent.com...", "AnimationHandler")
+-- safeLoad("https://githubusercontent.com...", "Choke Skill")
+-- safeLoad("https://githubusercontent.com...", "Fling Skill")
+-- safeLoad("https://githubusercontent.com...", "Massive Void Mesh Logic")
