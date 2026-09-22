@@ -1,3 +1,93 @@
+--// Services \\--
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+--// Character Setup \\--
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+local HAT_NAME = "Accessory (113_BuildABoatforaTopHat)"
+
+local ABSOLUTESOLVER = _G.ABSOLUTESOLVER
+
+--// 1. HARDCODED KEYFRAME MATRIX DATA \\--
+-- Storing your precise plugin angles directly inside a clean localized structure
+local kf0    = CFrame.new() -- Default resting pose angle at 0 seconds
+local kf0_3  = CFrame.Angles(math.rad(32.315), math.rad(57.124), math.rad(52.999))
+local kf0_43 = CFrame.Angles(math.rad(-11.516), math.rad(-25.726), math.rad(10.485))
+
+--// 2. TIMED INTERPOLATION ENGINES \\--
+local function playCFrameAnimation()
+	local torso = Character:FindFirstChild("Torso")
+	-- R6 shoulder joints inside the default Animate script control the "Right Arm" via Right Shoulder
+	local rs = torso and torso:FindFirstChild("Right Shoulder")
+	
+	if not rs then
+		warn("[Absolute Solver] Error: R6 Right Shoulder joint missing from character tree.")
+		return
+	end
+
+	-- Save your starting joint position so we can offset it safely
+	local defaultC0 = CFrame.new(1, 0.5, 0)
+	
+	print("[Absolute Solver] Initialising timed playback track matrix...")
+	
+	-- --- TRACK PHASE 1: 0.0 to 0.3 seconds ---
+	local duration1 = 0.3
+	local elapsed1 = 0
+	while elapsed1 < duration1 do
+		local dt = RunService.Heartbeat:Wait()
+		elapsed1 = math.min(elapsed1 + dt, duration1)
+		
+		-- Alpha value scales smoothly from 0.0 to 1.0 based on physical time passed
+		local alpha = elapsed1 / duration1
+		local currentPose = kf0:Lerp(kf0_3, alpha)
+		
+		rs.C0 = defaultC0 * currentPose
+	end
+
+	-- --- TRACK PHASE 2: 0.3 to 0.433 seconds ---
+	local duration2 = 0.133 -- Total window length from 0.300 to 0.433
+	local elapsed2 = 0
+	while elapsed2 < duration2 do
+		local dt = RunService.Heartbeat:Wait()
+		elapsed2 = math.min(elapsed2 + dt, duration2)
+		
+		local alpha = elapsed2 / duration2
+		local currentPose = kf0_3:Lerp(kf0_43, alpha)
+		
+		rs.C0 = defaultC0 * currentPose
+	end
+
+	-- --- TRACK PHASE 3: Absolute Terminal Frame (0.433s Lock) ---
+	rs.C0 = defaultC0 * kf0_43
+end
+
+--// 3. MAIN RUNTIME TIMELINE EXECUTOR \\--
+task.spawn(function()
+	if ABSOLUTESOLVER == true then
+		-- Phase A: Fire your precise timed keyframe loop sequence instantly
+		playCFrameAnimation()
+		
+		-- Phase B: Wait for your exact animation tracking timeline to reach peak extension
+		task.wait(0.433)
+		
+		-- Phase C: Turn on the background global variable so your Core Engine starts rendering
+		_G.SolverSymbol = true
+		
+		-- Phase D: Locate the flat parts inside your designated Top Hat accessory and uncloak it
+		local hat = Character:FindFirstChild(HAT_NAME)
+		local hatHandle = hat and hat:FindFirstChild("Handle")
+		local solverDisc = hatHandle and hatHandle:FindFirstChild("AbsoluteSolverDisc")
+		
+		if solverDisc then
+			solverDisc.Transparency = 0 -- Flash the dual-sided seamless SurfaceGuis visible globally!
+			print("[Absolute Solver] Visual glyphs deployed in sync at 0.433s.")
+		else
+			warn("[Absolute Solver Failure] Missing 'AbsoluteSolverDisc' target inside Hat Handle grid folder.")
+		end
+	end
+end)
 return {
 	Properties = {
 		Looping = false,
