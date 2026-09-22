@@ -1,0 +1,23 @@
+--// Services \\--
+local RunService = game:GetService("RunService")
+
+--// Character \\--
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+local hrp = Character:WaitForChild("HumanoidRootPart")
+local SolverPart = workspace:WaitForChild("SolverPart")
+local SolverActivate = loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/Anims/SolverActivate"))
+local ABSOLUTESOLVER = _G.ABSOLUTESOLVER
+
+--// ActivateSolver \\--
+task.spawn(function()
+	if ABSOLUTESOLVER == true then
+		SolverActivate()
+		task.wait(0.43)
+		-- Reveals the solver part
+		
+	end
+	
+end)
