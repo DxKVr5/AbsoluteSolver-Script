@@ -1,8 +1,166 @@
---// Load all scripts \\--
-loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/AccessoriesHider"))() -- AccessoriesHider
-loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/LoadUI"))() -- LoadUI
-loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/ActivateSolver"))() -- ActivateSolver
-loadstring(game:HttpGet(""))() -- AnimationHandler
-loadstring(game:HttpGet(""))() -- Choke Skill
-loadstring(game:HttpGet(""))() -- Fling Skill
-loadstring(game:HttpGet(""))() -- [NULL]
+--// Services \\--
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+--// Character Setup \\--
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+local hrp = Character:WaitForChild("HumanoidRootPart")
+
+--// CONFIGURATION SETTINGS \\--
+local SolverImageID = "rbxassetid://13401171825"  -- Your custom Solver PNG Asset ID
+local CynColor = Color3.fromRGB(255, 230, 0)      -- Cyn Yellow Glow
+
+-- CHANGE THESE to match the exact names of the free items your avatar is wearing!
+local HAT_NAME = "Accessory (113_BuildABoatforaTopHat)" 
+local BACKPACK_NAME = "Accessory (102_DualoftheHeights)"
+
+--// 1. INSTANT HIDE ON LOAD \\--
+local hat = Character:WaitForChild(HAT_NAME, 5)
+local backpack = Character:WaitForChild(BACKPACK_NAME, 5)
+
+local hatHandle = hat and hat:FindFirstChild("Handle")
+local backpackHandle = backpack and backpack:FindFirstChild("Handle")
+
+if hatHandle then hatHandle.Transparency = 1 print("[Solver Engine] Hat hidden safely.") end
+if backpackHandle then backpackHandle.Transparency = 1 print("[Solver Engine] Backpack hidden safely.") end
+
+--// 2. INITIALISE SYSTEM STATE VARIABLES \\--
+_G.SolverSymbol = false -- Separate global variable for the hand mesh
+_G.NULLVOID = false
+
+-- Local tracker pointers
+local flatPart = nil
+local spinConnection = nil
+local highlight = nil
+
+--// 3. THE HAND SOLVER MORPH LOGIC \\--
+local function morphHandToSolver()
+	local handLimb = Character:FindFirstChild("RightHand") or Character:FindFirstChild("Right Arm")
+	if not handLimb or not hatHandle then return end
+
+	-- Build your flat canvas brick
+	flatPart = Instance.new("Part")
+	flatPart.Name = "AbsoluteSolverDisc"
+	flatPart.Size = Vector3.new(3, 0.05, 3) 
+	flatPart.Material = Enum.Material.Neon
+	flatPart.Transparency = 1 -- Keep invisible until your activation animation tells it to show
+	flatPart.CanCollide = false
+	flatPart.Parent = hatHandle
+
+	-- Weld it right above your palm
+	local localWeld = Instance.new("ManualWeld")
+	localWeld.Part0 = hatHandle
+	localWeld.Part1 = flatPart
+	localWeld.C0 = CFrame.new(0, 1.5, 0) -- Floating offset
+	localWeld.Parent = flatPart
+
+	-- Top Canvas Configuration
+	local topGui = Instance.new("SurfaceGui")
+	topGui.Face = Enum.NormalId.Top
+	topGui.AlwaysOnTop = true
+	topGui.LightInfluence = 0
+	topGui.CanvasSize = Vector2.new(500, 500)
+	topGui.Parent = flatPart
+
+	local topImage = Instance.new("ImageLabel")
+	topImage.Size = UDim2.new(1, 0, 1, 0)
+	topImage.BackgroundTransparency = 1
+	topImage.Image = SolverImageID
+	topImage.ImageColor3 = CynColor
+	topImage.Parent = topGui
+
+	-- Bottom Canvas Configuration (Flipped 180° for seamlessness)
+	local bottomGui = Instance.new("SurfaceGui")
+	bottomGui.Face = Enum.NormalId.Bottom
+	bottomGui.AlwaysOnTop = true
+	bottomGui.LightInfluence = 0
+	bottomGui.CanvasSize = Vector2.new(500, 500)
+	bottomGui.Parent = flatPart
+
+	local bottomImage = Instance.new("ImageLabel")
+	bottomImage.Size = UDim2.new(1, 0, 1, 0)
+	bottomImage.BackgroundTransparency = 1
+	bottomImage.Image = SolverImageID
+	bottomImage.ImageColor3 = CynColor
+	bottomImage.Rotation = 180 
+	bottomImage.Parent = bottomGui
+
+	-- Continuous Loop: Keeps the hand seal spinning smoothly
+	spinConnection = RunService.Heartbeat:Connect(function()
+		if flatPart and flatPart.Parent then
+			topImage.Rotation = topImage.Rotation + 3
+			bottomImage.Rotation = bottomImage.Rotation - 3
+		else
+			spinConnection:Disconnect()
+		end
+	end)
+end
+
+--// 4. THE [null] BLACK HOLE MORPH LOGIC \\--
+local function morphBackpackToNull()
+	if not backpackHandle then return end
+
+	local mesh = backpackHandle:FindFirstChildOfClass("SpecialMesh") or backpackHandle:FindFirstChildOfClass("FileMesh")
+	if not mesh then return end
+
+	mesh.TextureId = "" 
+	backpackHandle.Color = Color3.fromRGB(0, 0, 0) -- Pitch black void
+	mesh.Scale = Vector3.new(150, 150, 150) -- Expanding mesh size
+	backpackHandle.Transparency = 0 -- Reveal the giant void sphere!
+
+	-- Apply the yellow neon outline framework
+	highlight = Instance.new("Highlight")
+	highlight.Parent = backpackHandle
+	highlight.OutlineColor = CynColor
+	highlight.OutlineTransparency = 0
+	highlight.FillTransparency = 1
+end
+
+--// 5. THE ACTIVE STATE TRACKER ENGINE \\--
+task.spawn(function()
+	local lastSolverState = false
+	local lastVoidState = false
+
+	while task.wait(0.1) do
+		if not Character or not Humanoid or Humanoid.Health <= 0 then break end
+
+		-- A. Track Hand Solver Symbol Changes via _G.SolverSymbol
+		if _G.SolverSymbol ~= lastSolverState then
+			lastSolverState = _G.SolverSymbol
+			if _G.SolverSymbol == true then
+				print("[Solver Engine] Morphing Hand...")
+				morphHandToSolver()
+			else
+				print("[Solver Engine] Cleared Hand Visuals.")
+				if spinConnection then spinConnection:Disconnect() end
+				if flatPart then flatPart:Destroy() end
+			end
+		end
+
+		-- B. Track Null Void Changes via _G.NULLVOID
+		if _G.NULLVOID ~= lastVoidState then
+			lastVoidState = _G.NULLVOID
+			if _G.NULLVOID == true then
+				print("[Solver Engine] Deploying [null] Void Singularity...")
+				morphBackpackToNull()
+			else
+				print("[Solver Engine] Closed Singularity.")
+				if highlight then highlight:Destroy() end
+				if backpackHandle then
+					backpackHandle.Transparency = 1 -- Hide it away again
+				end
+			end
+		end
+	end
+  task.wait(3)
+  --// Load all scripts \\--
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/LoadUI"))() -- LoadUI
+  loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/ActivateSolver"))() -- ActivateSolver
+  loadstring(game:HttpGet(""))() -- AnimationHandler
+  loadstring(game:HttpGet(""))() -- Choke Skill
+  loadstring(game:HttpGet(""))() -- Fling Skill
+  loadstring(game:HttpGet(""))() -- [NULL]
+
+end)
