@@ -1,0 +1,136 @@
+--// Absolute Solver Core Morph Visual Engine \\--
+-- This script runs continuously in the background monitoring your UI states!
+return function()
+	print("[Core Engine] Visual loop monitoring initialized.")
+	
+	local RunService = game:GetService("RunService")
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+	-- Configuration references (Synced with your master UI parameters)
+	local SolverImageID = "rbxassetid://13401171825"
+	local CynColor = Color3.fromRGB(255, 230, 0)
+	local HAT_NAME = "Accessory (113_BuildABoatforaTopHat)"
+	local BACKPACK_NAME = "Accessory (102_DualoftheHeights)"
+
+	local hat = Character:FindFirstChild(HAT_NAME)
+	local backpack = Character:FindFirstChild(BACKPACK_NAME)
+	local hatHandle = hat and hat:FindFirstChild("Handle")
+	local backpackHandle = backpack and backpack:FindFirstChild("Handle")
+
+	-- Tracking variables
+	local flatPart = nil
+	local spinConnection = nil
+	local highlight = nil
+
+	--// HAND SOLVER CONSTRUCTION INTERFACE \\--
+	local function morphHandToSolver()
+		local handLimb = Character:FindFirstChild("Right Arm") or Character:FindFirstChild("RightHand")
+		if not handLimb or not hatHandle then return end
+
+		flatPart = Instance.new("Part")
+		flatPart.Name = "AbsoluteSolverDisc"
+		flatPart.Size = Vector3.new(3, 0.05, 3) 
+		flatPart.Material = Enum.Material.Neon
+		flatPart.Transparency = 1 -- Kept hidden until animation timeline finishes
+		flatPart.CanCollide = false
+		flatPart.Parent = hatHandle
+
+		local localWeld = Instance.new("ManualWeld")
+		localWeld.Part0 = hatHandle
+		localWeld.Part1 = flatPart
+		localWeld.C0 = CFrame.new(0, 1.5, 0) -- Floating offset above palm
+		localWeld.Parent = flatPart
+
+		-- Top Canvas Layer
+		local topGui = Instance.new("SurfaceGui")
+		topGui.Face = Enum.NormalId.Top
+		topGui.AlwaysOnTop = true
+		topGui.LightInfluence = 0
+		topGui.CanvasSize = Vector2.new(500, 500)
+		topGui.Parent = flatPart
+
+		local topImage = Instance.new("ImageLabel")
+		topImage.Size = UDim2.new(1, 0, 1, 0)
+		topImage.BackgroundTransparency = 1
+		topImage.Image = SolverImageID
+		topImage.ImageColor3 = CynColor
+		topImage.Parent = topGui
+
+		-- Bottom Canvas Layer (Flipped 180 for seamless angles)
+		local bottomGui = Instance.new("SurfaceGui")
+		bottomGui.Face = Enum.NormalId.Bottom
+		bottomGui.AlwaysOnTop = true
+		bottomGui.LightInfluence = 0
+		bottomGui.CanvasSize = Vector2.new(500, 500)
+		bottomGui.Parent = flatPart
+
+		local bottomImage = Instance.new("ImageLabel")
+		bottomImage.Size = UDim2.new(1, 0, 1, 0)
+		bottomImage.BackgroundTransparency = 1
+		bottomImage.Image = SolverImageID
+		bottomImage.ImageColor3 = CynColor
+		bottomImage.Rotation = 180 
+		bottomImage.Parent = bottomGui
+
+		-- Connect the render step to rotate your glyph labels continuously
+		spinConnection = RunService.Heartbeat:Connect(function()
+			if flatPart and flatPart.Parent then
+				topImage.Rotation = topImage.Rotation + 3
+				bottomImage.Rotation = bottomImage.Rotation - 3
+			else
+				spinConnection:Disconnect()
+			end
+		end)
+	end
+
+	--// [null] BLACK HOLE GEOMETRY EXPANSER \\--
+	local function morphBackpackToNull()
+		if not backpackHandle then return end
+		local mesh = backpackHandle:FindFirstChildOfClass("SpecialMesh") or backpackHandle:FindFirstChildOfClass("FileMesh")
+		if not mesh then return end
+
+		mesh.TextureId = "" 
+		backpackHandle.Color = Color3.fromRGB(0, 0, 0) -- Pure black void silhouette
+		mesh.Scale = Vector3.new(150, 150, 150) -- Massive size boundary bypass
+		backpackHandle.Transparency = 0 -- Reveal visual tracking sphere
+
+		highlight = Instance.new("Highlight")
+		highlight.Parent = backpackHandle
+		highlight.OutlineColor = CynColor
+		highlight.OutlineTransparency = 0
+		highlight.FillTransparency = 1
+	end
+
+	--// DATA REGISTER LISTENER RUNTIME ENGINE \\--
+	task.spawn(function()
+		local lastSolverState, lastVoidState = false, false
+		
+		while task.wait(0.1) do
+			if not Character or not Character:FindFirstChild("Humanoid") or Character.Humanoid.Health <= 0 then break end
+			
+			-- Handle Hand Glyph Trigger State
+			if _G.SolverSymbol ~= lastSolverState then
+				lastSolverState = _G.SolverSymbol
+				if _G.SolverSymbol == true then 
+					morphHandToSolver()
+				else
+					if spinConnection then spinConnection:Disconnect() end
+					if flatPart then flatPart:Destroy() end
+				end
+			end
+			
+			-- Handle Null Void Trigger State
+			if _G.NULLVOID ~= lastVoidState then
+				lastVoidState = _G.NULLVOID
+				if _G.NULLVOID == true then 
+					morphBackpackToNull()
+				else
+					if highlight then highlight:Destroy() end
+					if backpackHandle then backpackHandle.Transparency = 1 end -- Re-cloak void
+				end
+			end
+		end
+	end)
+end
