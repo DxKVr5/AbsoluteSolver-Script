@@ -1,230 +1,35 @@
 --// Absolute Solver Master Hub Bootstrapper \\--
-print("[Master Hub] Initialising Rebuilt Absolute Solver...")
+print("[Master Hub] Initialising Bare-Minimum Loader...")
 
 --// Character Setup \\--
-local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
 
--- CONFIGURATION SETTINGS
-local SolverImageID = "rbxassetid://13401171825"
-local CynColor = Color3.fromRGB(255, 230, 0)
+-- Target asset strings matching your equipped inventory list
 local HAT_NAME = "Accessory (113_BuildABoatforaTopHat)" 
 local BACKPACK_NAME = "Accessory (102_DualoftheHeights)"
 
---// 1. INSTANT CLOAKING ON LOAD \\--
+--// 1. INSTANT CLOAKING AREA (The only work Main does) \\--
 local hat = Character:WaitForChild(HAT_NAME, 5)
 local backpack = Character:WaitForChild(BACKPACK_NAME, 5)
+
 local hatHandle = hat and hat:FindFirstChild("Handle")
 local backpackHandle = backpack and backpack:FindFirstChild("Handle")
 
 if hatHandle then hatHandle.Transparency = 1 print("[Master] Hat hidden.") end
 if backpackHandle then backpackHandle.Transparency = 1 print("[Master] Backpack hidden.") end
 
---// 2. STATE MANAGER VARIABLES \\--
-_G.ABSOLUTESOLVER = false
-_G.SolverSymbol = false
-_G.NULLVOID = false
+--// 2. REMOTE HANDOFF ENGINE \\--
+-- Main hands off 100% of the remaining workload to your GitHub repository files instantly
+local URL_GUI_LOAD = "https://githubusercontent.com"
 
-local flatPart = nil
-local spinConnection = nil
-local highlight = nil
+local launchHub, err = pcall(function()
+	loadstring(game:HttpGet(URL_GUI_LOAD))()
+end)
 
---// 3. HAND SOLVER GEOMETRY BUILDER \\--
-local function morphHandToSolver()
-	local handLimb = Character:FindFirstChild("Right Arm") or Character:FindFirstChild("RightHand")
-	if not handLimb or not hatHandle then return end
-
-	flatPart = Instance.new("Part")
-	flatPart.Name = "AbsoluteSolverDisc"
-	flatPart.Size = Vector3.new(3, 0.05, 3) 
-	flatPart.Material = Enum.Material.Neon
-	flatPart.Transparency = 1 -- Kept hidden until animation finishes
-	flatPart.CanCollide = false
-	flatPart.Parent = hatHandle
-
-	local localWeld = Instance.new("ManualWeld")
-	localWeld.Part0 = hatHandle
-	localWeld.Part1 = flatPart
-	localWeld.C0 = CFrame.new(0, 1.5, 0) 
-	localWeld.Parent = flatPart
-
-	local topGui = Instance.new("SurfaceGui")
-	topGui.Face = Enum.NormalId.Top
-	topGui.AlwaysOnTop = true
-	topGui.LightInfluence = 0
-	topGui.CanvasSize = Vector2.new(500, 500)
-	topGui.Parent = flatPart
-
-	local topImage = Instance.new("ImageLabel")
-	topImage.Size = UDim2.new(1, 0, 1, 0)
-	topImage.BackgroundTransparency = 1
-	topImage.Image = SolverImageID
-	topImage.ImageColor3 = CynColor
-	topImage.Parent = topGui
-
-	local bottomGui = Instance.new("SurfaceGui")
-	bottomGui.Face = Enum.NormalId.Bottom
-	bottomGui.AlwaysOnTop = true
-	bottomGui.LightInfluence = 0
-	bottomGui.CanvasSize = Vector2.new(500, 500)
-	bottomGui.Parent = flatPart
-
-	local bottomImage = Instance.new("ImageLabel")
-	bottomImage.Size = UDim2.new(1, 0, 1, 0)
-	bottomImage.BackgroundTransparency = 1
-	bottomImage.Image = SolverImageID
-	bottomImage.ImageColor3 = CynColor
-	bottomImage.Rotation = 180 
-	bottomImage.Parent = bottomGui
-
-	spinConnection = RunService.Heartbeat:Connect(function()
-		if flatPart and flatPart.Parent then
-			topImage.Rotation = topImage.Rotation + 3
-			bottomImage.Rotation = bottomImage.Rotation - 3
-		else
-			spinConnection:Disconnect()
-		end
-	end)
+if launchHub then
+	print("[Master Hub] Workload passed to LoadUI successfully!")
+else
+	warn("[Master Hub] Critical Error calling remote files: " .. tostring(err))
 end
-
---// 4. BLACK HOLE MORPH LOGIC \\--
-local function morphBackpackToNull()
-	if not backpackHandle then return end
-	local mesh = backpackHandle:FindFirstChildOfClass("SpecialMesh") or backpackHandle:FindFirstChildOfClass("FileMesh")
-	if not mesh then return end
-
-	mesh.TextureId = "" 
-	backpackHandle.Color = Color3.fromRGB(0, 0, 0) 
-	mesh.Scale = Vector3.new(150, 150, 150) 
-	backpackHandle.Transparency = 0 
-
-	highlight = Instance.new("Highlight")
-	highlight.Parent = backpackHandle
-	highlight.OutlineColor = CynColor
-	highlight.OutlineTransparency = 0
-	highlight.FillTransparency = 1
-end
-
---// 5. DATA STATE MONITORING ENGINE \\--
-task.spawn(function()
-	local lastSolverState, lastVoidState = false, false
-	while task.wait(0.1) do
-		if not Character or Humanoid.Health <= 0 then break end
-		if _G.SolverSymbol ~= lastSolverState then
-			lastSolverState = _G.SolverSymbol
-			if _G.SolverSymbol == true then morphHandToSolver()
-			else
-				if spinConnection then spinConnection:Disconnect() end
-				if flatPart then flatPart:Destroy() end
-			end
-		end
-		if _G.NULLVOID ~= lastVoidState then
-			lastVoidState = _G.NULLVOID
-			if _G.NULLVOID == true then morphBackpackToNull()
-			else
-				if highlight then highlight:Destroy() end
-				if backpackHandle then backpackHandle.Transparency = 1 end
-			end
-		end
-	end
-end)
-
---// 6. BUILD USER INTERFACE CORE PANEL \\--
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "SolverInterface"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = PlayerGui
-
-local ToggleButton = Instance.new("TextButton")
-ToggleButton.Size = UDim2.new(0, 60, 0, 60)
-ToggleButton.Position = UDim2.new(0.05, 0, 0.2, 0)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-ToggleButton.TextColor3 = CynColor
-ToggleButton.TextSize = 22
-ToggleButton.Text = "[X]"
-ToggleButton.Font = Enum.Font.Code
-ToggleButton.Active = true
-ToggleButton.Draggable = true 
-ToggleButton.Parent = ScreenGui
-
-local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 220, 0, 230)
-MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-MainFrame.Visible = false 
-MainFrame.Parent = ScreenGui
-
-local stroke = Instance.new("UIStroke")
-stroke.Color = CynColor
-stroke.Thickness = 2
-stroke.Parent = MainFrame
-
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.BackgroundTransparency = 1
-Title.Text = "ABSOLUTE SOLVER"
-Title.TextColor3 = CynColor
-Title.Font = Enum.Font.Code
-Title.TextSize = 18
-Title.Parent = MainFrame
-
-local function createButton(text, pos)
-	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(0, 180, 0, 40)
-	btn.Position = pos
-	btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-	btn.Font = Enum.Font.Code
-	btn.TextSize = 13
-	btn.Text = text
-	btn.Parent = MainFrame
-	local s = Instance.new("UIStroke") s.Color = Color3.fromRGB(40, 40, 40) s.Parent = btn
-	return btn
-end
-
-local ActivateBtn = createButton("ACTIVATE SOLVER", UDim2.new(0, 20, 0, 60))
-local DeployVoidBtn = createButton("DEPLOY [null] VOID", UDim2.new(0, 20, 0, 120))
-local AttackBtn = createButton("EXECUTE CHOKE", UDim2.new(0, 20, 0, 180))
-
-ToggleButton.MouseButton1Click:Connect(function()
-	MainFrame.Visible = not MainFrame.Visible
-	ToggleButton.Text = MainFrame.Visible and "[O]" or "[X]"
-end)
-
--- PRE-COMPILE RECONSTRUCTED WEBLINK URL
-local URL_ACTIVATE = "https://githubusercontent.com"
-local CompiledActivateScript = loadstring(game:HttpGet(URL_ACTIVATE))()
-
-ActivateBtn.MouseButton1Click:Connect(function()
-	_G.ABSOLUTESOLVER = not _G.ABSOLUTESOLVER
-	if _G.ABSOLUTESOLVER == true then
-		ActivateBtn.TextColor3 = CynColor
-		ActivateBtn.Text = "SOLVER: ACTIVE"
-		
-		-- Fired natively from compiled global memory!
-		if CompiledActivateScript then
-			task.spawn(CompiledActivateScript)
-		else
-			warn("[Master] Animation function failed compiled check.")
-		end
-	else
-		ActivateBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-		ActivateBtn.Text = "ACTIVATE SOLVER"
-		_G.SolverSymbol = false
-	end
-end)
-
-DeployVoidBtn.MouseButton1Click:Connect(function()
-	_G.NULLVOID = not _G.NULLVOID
-	if _G.NULLVOID == true then
-		DeployVoidBtn.TextColor3 = Color3.fromRGB(255, 0, 0)
-		DeployVoidBtn.Text = "[null] VOID ACTIVE"
-	else
-		DeployVoidBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-		DeployVoidBtn.Text = "DEPLOY [null] VOID"
-	end
-end)
