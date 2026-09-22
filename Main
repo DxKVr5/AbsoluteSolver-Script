@@ -1,7 +1,7 @@
 --// Load all scripts \\--
 loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/AccessoriesHider"))() -- AccessoriesHider
 loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/LoadUI"))() -- LoadUI
-loadstring(game:HttpGet(""))() -- ActivateSolver
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/ActivateSolver"))() -- ActivateSolver
 loadstring(game:HttpGet(""))() -- AnimationHandler
 loadstring(game:HttpGet(""))() -- Choke Skill
 loadstring(game:HttpGet(""))() -- Fling Skill
