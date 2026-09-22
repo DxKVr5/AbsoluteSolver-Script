@@ -71,7 +71,7 @@ _G.NULLVOID = false
 --// Centralized Cloud Script Handoff Engine \\--
 local function loadPipelineScripts()
 	print("[Solver UI] Connecting to cloud pipeline...")
-	local repo = "https://githubusercontent.com"
+	local repo = "https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/"
 	
 	local success, err = pcall(function()
 		-- Pre-compile sub-scripts into executable global functions
