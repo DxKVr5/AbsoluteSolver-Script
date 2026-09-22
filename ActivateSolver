@@ -9,56 +9,34 @@ local Humanoid = Character:WaitForChild("Humanoid")
 local hrp = Character:WaitForChild("HumanoidRootPart")
 local HAT_NAME = "Accessory (113_BuildABoatforaTopHat)"
 
---// Loadstrings \\--
-local SolverActivate = loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/Anims/SolverActivate"))
+--// Fix: Add () to compile the HttpGet function into executable code instantly \\--
+local SolverActivate = loadstring(game:HttpGet("https://githubusercontent.com"))()
 local ABSOLUTESOLVER = _G.ABSOLUTESOLVER
 
 --// ActivateSolver \\--
 task.spawn(function()
 	if ABSOLUTESOLVER == true then
-		-- 1. Step: Instantly initialize the hidden hand geometric layout structures
-		_G.SolverSymbol = true 
-
-		-- 2. Step: Execute your custom Studio joint lifting matrix from GitHub
-		SolverActivate()
-
-		-- 3. Step: Wait for your exact animation keyframe timing sequence to reach peak stance
+		-- 1. Fire the visual CFrame animation data table sequence
+		if SolverActivate then
+			SolverActivate()
+		else
+			warn("[Absolute Solver] Animation sub-script failed to execute!")
+		end
+		
+		-- 2. Wait for your arm movement timeline to reach peak pose
 		task.wait(0.43)
-
-		-- 4. Step: Find the flat disc created inside your Top Hat accessory handle
+		
+		-- 3. Turn on the background global variable so the Hider script spawns the mesh
+		_G.SolverSymbol = true
+		
+		-- 4. Locate the flat parts inside the hat and flash it visible to the server
 		local hat = Character:FindFirstChild(HAT_NAME)
 		local hatHandle = hat and hat:FindFirstChild("Handle")
 		local solverDisc = hatHandle and hatHandle:FindFirstChild("AbsoluteSolverDisc")
-
-		-- 5. Step: Reveal the holographic spinning rings seamlessly!
+		
 		if solverDisc then
-			solverDisc.Transparency = 0 -- Turns the canvas block 100% visible to the server
-			print("[Absolute Solver] Hand visuals successfully deployed.")
-		else
-			warn("[Absolute Solver] Target canvas disc not found inside Hat Handle!")
+			solverDisc.Transparency = 0 -- Drops transparency to reveal the seamless SurfaceGuis
+			print("[Absolute Solver] Hand glyph successfully uncloaked.")
 		end
 	end
-end)
---// Services \\--
-local RunService = game:GetService("RunService")
-
---// Character \\--
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
-local hrp = Character:WaitForChild("HumanoidRootPart")
-local SolverPart = workspace:WaitForChild("SolverPart")
-local SolverActivate = loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/Anims/SolverActivate"))
-local ABSOLUTESOLVER = _G.ABSOLUTESOLVER
-
---// ActivateSolver \\--
-task.spawn(function()
-	if ABSOLUTESOLVER == true then
-		SolverActivate()
-		task.wait(0.43)
-		-- Reveals the solver part
-		
-	end
-	
 end)
