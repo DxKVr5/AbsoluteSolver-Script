@@ -22,7 +22,7 @@ if backpackHandle then backpackHandle.Transparency = 1 print("[Master] Backpack 
 
 --// 2. REMOTE HANDOFF ENGINE \\--
 -- Main hands off 100% of the remaining workload to your GitHub repository files instantly
-local URL_GUI_LOAD = "https://githubusercontent.com"
+local URL_GUI_LOAD = "https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/LoadUI"
 
 local launchHub, err = pcall(function()
 	loadstring(game:HttpGet(URL_GUI_LOAD))()
