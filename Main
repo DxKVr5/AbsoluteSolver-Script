@@ -1,17 +1,12 @@
---// Absolute Solver Master Hub Bootstrapper \\--
 print("[Master Hub] Initialising Absolute Solver Engine...")
 
---// Character Setup \\--
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
--- CHANGE THESE to match the exact names of the free items your avatar is wearing!
 local HAT_NAME = "Accessory (113_BuildABoatforaTopHat)" 
 local BACKPACK_NAME = "Accessory (102_DualoftheHeights)"
 
---// 1. INSTANT HIDE ON INJECTION \\--
--- This runs immediately before fetching any web code so you look normal right away
 local hat = Character:WaitForChild(HAT_NAME, 5)
 local backpack = Character:WaitForChild(BACKPACK_NAME, 5)
 
@@ -27,12 +22,9 @@ if backpackHandle then
 	print("[Master Hub] Backpack hidden safely.") 
 end
 
---// 2. FIXED DIRECT RAW URLS \\--
--- Points directly to your verified main repository path layout
 local URL_GUI_LOAD    = "https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/LoadUI"
-local URL_ACTIVATE    = "https://githubusercontent.com"
+local URL_ACTIVATE    = "https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/ActivateSolver"
 
---// 3. PRE-LOAD AND COMPILE FILES IN ISOLATION \\--
 local success, err = pcall(function()
     _G.LoadSolverGui   = loadstring(game:HttpGet(URL_GUI_LOAD))
     _G.SolverActivate  = loadstring(game:HttpGet(URL_ACTIVATE))
@@ -43,7 +35,6 @@ if not success then
     return
 end
 
---// 4. DEPLOY THE USER INTERFACE PANEL \\--
 if _G.LoadSolverGui then
     print("[Master Hub] Launching GUI Panel...")
     _G.LoadSolverGui()
