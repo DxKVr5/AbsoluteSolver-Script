@@ -10,7 +10,7 @@ local hrp = Character:WaitForChild("HumanoidRootPart")
 local HAT_NAME = "Accessory (113_BuildABoatforaTopHat)"
 
 --// Fix: Add () to compile the HttpGet function into executable code instantly \\--
-local SolverActivate = loadstring(game:HttpGet("https://githubusercontent.com"))()
+local SolverActivate = loadstring(game:HttpGet("https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/SolverActivate"))()
 local ABSOLUTESOLVER = _G.ABSOLUTESOLVER
 
 --// ActivateSolver \\--
