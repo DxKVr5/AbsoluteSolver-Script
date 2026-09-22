@@ -29,7 +29,7 @@ end
 
 --// 2. FIXED DIRECT RAW URLS \\--
 -- Points directly to your verified main repository path layout
-local URL_GUI_LOAD    = "https://githubusercontent.com"
+local URL_GUI_LOAD    = "https://raw.githubusercontent.com/DxKVr5/AbsoluteSolver-Script/refs/heads/main/LoadUI"
 local URL_ACTIVATE    = "https://githubusercontent.com"
 
 --// 3. PRE-LOAD AND COMPILE FILES IN ISOLATION \\--
