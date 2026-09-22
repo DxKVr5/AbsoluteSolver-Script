@@ -1,0 +1,34 @@
+return {
+	Properties = {
+		Looping = false,
+		Priority = Enum.AnimationPriority.Core
+	},
+	Keyframes = {
+		[0] = {
+			["HumanoidRootPart"] = {
+				["Torso"] = {
+					["Right Arm"] = {
+					},
+				},
+			},
+		},
+		[0.3] = {
+			["HumanoidRootPart"] = {
+				["Torso"] = {
+					["Right Arm"] = {
+						CFrame = CFrame.Angles(math.rad(32.315), math.rad(57.124), math.rad(52.999)),
+					},
+				},
+			},
+		},
+		[0.433] = {
+			["HumanoidRootPart"] = {
+				["Torso"] = {
+					["Right Arm"] = {
+						CFrame = CFrame.Angles(math.rad(-11.516), math.rad(-25.726), math.rad(10.485)),
+					},
+				},
+			},
+		},
+	}
+}
