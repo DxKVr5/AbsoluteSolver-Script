@@ -1,3 +1,4 @@
+--// UI Setup \\--
 local SolverUI = Instance.new("ScreenGui")
 local Toggle = Instance.new("Frame")
 local Off = Instance.new("TextButton")
@@ -6,7 +7,6 @@ local Title = Instance.new("Frame")
 local TextLabel = Instance.new("TextLabel")
 
 --Properties:
-
 SolverUI.Name = "SolverUI"
 SolverUI.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 SolverUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -63,35 +63,59 @@ TextLabel.TextColor3 = Color3.fromRGB(255, 240, 24)
 TextLabel.TextSize = 30.000
 TextLabel.TextWrapped = true
 
--- Scripts:
+--// Global System States Initialization \\--
+_G.ABSOLUTESOLVER = false
+_G.SolverSymbol = false
+_G.NULLVOID = false
 
-local function KNHCFX_fake_script() -- Off.On 
-	local script = Instance.new('LocalScript', Off)
-
-	local button = script.Parent
-	local ON = button.Parent.On
-	ABSOLUTESOLVER = _G.ABSOLUTESOLVER
+--// Centralized Cloud Script Handoff Engine \\--
+local function loadPipelineScripts()
+	print("[Solver UI] Connecting to cloud pipeline...")
+	local repo = "https://githubusercontent.com"
 	
-	button.MouseButton1Click:Connect(function()
-		button.Visible = false
-		ON.Visible = true
-		_G.ABSOLUTESOLVER = true
-		
+	local success, err = pcall(function()
+		-- Pre-compile sub-scripts into executable global functions
+		_G.RunCoreEngine    = loadstring(game:HttpGet(repo .. "CoreMorphEngine"))()
+		_G.RunActivateAnim  = loadstring(game:HttpGet(repo .. "ActivateSolver"))()
+		-- _G.RunChokeAttack = loadstring(game:HttpGet(repo .. "ChokeSkill"))
+		-- _G.RunFlingAttack = loadstring(game:HttpGet(repo .. "FlingSkill"))
 	end)
-end
-coroutine.wrap(KNHCFX_fake_script)()
-local function LSVR_fake_script() -- On.Off 
-	local script = Instance.new('LocalScript', On)
-
-	local button = script.Parent
-	local OFF = button.Parent.Off
-	ABSOLUTESOLVER = _G.ABSOLUTESOLVER
 	
-	button.MouseButton1Click:Connect(function()
-		button.Visible = false
-		OFF.Visible = true
-		_G.ABSOLUTESOLVER = false
-		
-	end)
+	if success then
+		print("[Solver UI] Cloud binaries compiled smoothly into RAM.")
+		-- Instantly boot your background cloaking/morph engine loops!
+		if _G.RunCoreEngine then task.spawn(_G.RunCoreEngine) end
+	else
+		warn("[Solver UI] Pipeline connection failed: " .. tostring(err))
+	end
 end
-coroutine.wrap(LSVR_fake_script)()
+
+-- Execute the download function as soon as the interface registers on screen
+loadPipelineScripts()
+
+--// Centralized UI Event Triggers \\--
+
+-- Turning the Solver ON
+Off.MouseButton1Click:Connect(function()
+	Off.Visible = false
+	On.Visible = true
+	_G.ABSOLUTESOLVER = true
+	
+	-- Fire your custom R6/R15 animation sequence and visual hand triggers
+	if _G.RunActivateAnim then
+		task.spawn(_G.RunActivateAnim)
+	else
+		warn("[Solver UI Error] Activation script compiled chunk is empty.")
+	end
+end)
+
+-- Turning the Solver OFF
+On.MouseButton1Click:Connect(function()
+	On.Visible = false
+	Off.Visible = true
+	_G.ABSOLUTESOLVER = false
+	
+	-- Disable background visual systems instantly via state tracking
+	_G.SolverSymbol = false
+	_G.NULLVOID = false
+end)
