@@ -8,6 +8,71 @@ local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Humanoid = Character:WaitForChild("Humanoid")
 local HAT_NAME = "Accessory (113_BuildABoatforaTopHat)"
 
+-- Returning a function allows the main script to execute this cleanly!
+return function()
+	local ABSOLUTESOLVER = _G.ABSOLUTESOLVER
+	if ABSOLUTESOLVER ~= true then return end
+
+	-- 1. BUILT-IN KEYFRAME DATA (No extra download step required)
+	local kf0    = CFrame.new() 
+	local kf0_3  = CFrame.Angles(math.rad(32.315), math.rad(57.124), math.rad(52.999))
+	local kf0_43 = CFrame.Angles(math.rad(-11.516), math.rad(-25.726), math.rad(10.485))
+
+	-- 2. TIMED INTERPOLATION REANIMATION ENGINE
+	local torso = Character:FindFirstChild("Torso")
+	local rs = torso and torso:FindFirstChild("Right Shoulder")
+	
+	if rs then
+		local defaultC0 = CFrame.new(1, 0.5, 0)
+		print("[Absolute Solver] Playing built-in animation...")
+		
+		-- PHASE 1: 0.0 to 0.3 seconds
+		local duration1 = 0.3
+		local elapsed1 = 0
+		while elapsed1 < duration1 do
+			local dt = RunService.Heartbeat:Wait()
+			elapsed1 = math.min(elapsed1 + dt, duration1)
+			local alpha = elapsed1 / duration1
+			rs.C0 = defaultC0 * kf0:Lerp(kf0_3, alpha)
+		end
+
+		-- PHASE 2: 0.3 to 0.433 seconds
+		local duration2 = 0.133 
+		local elapsed2 = 0
+		while elapsed2 < duration2 do
+			local dt = RunService.Heartbeat:Wait()
+			elapsed2 = math.min(elapsed2 + dt, duration2)
+			local alpha = elapsed2 / duration2
+			rs.C0 = defaultC0 * kf0_3:Lerp(kf0_43, alpha)
+		end
+
+		-- Lock to final pose angle
+		rs.C0 = defaultC0 * kf0_43
+	end
+
+	-- 3. SYNCED VISUAL TRANSFORMATION 
+	task.wait(0.05) -- Tiny safety cushion delay
+	_G.SolverSymbol = true -- Tells the main engine to generate the model
+	
+	local hat = Character:FindFirstChild(HAT_NAME)
+	local hatHandle = hat and hat:FindFirstChild("Handle")
+	local solverDisc = hatHandle and hatHandle:FindFirstChild("AbsoluteSolverDisc")
+	
+	if solverDisc then
+		solverDisc.Transparency = 0 -- Flash it visible instantly!
+		print("[Absolute Solver] Visual glyphs deployed in sync at 0.433s.")
+	end
+end
+--// Services \\--
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+--// Character Setup \\--
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+local HAT_NAME = "Accessory (113_BuildABoatforaTopHat)"
+
 local ABSOLUTESOLVER = _G.ABSOLUTESOLVER
 
 --// 1. BUILT-IN KEYFRAME DATA (No loadstring needed!) \\--
