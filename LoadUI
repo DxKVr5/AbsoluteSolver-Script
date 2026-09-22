@@ -1,0 +1,97 @@
+local SolverUI = Instance.new("ScreenGui")
+local Toggle = Instance.new("Frame")
+local Off = Instance.new("TextButton")
+local On = Instance.new("TextButton")
+local Title = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+
+--Properties:
+
+SolverUI.Name = "SolverUI"
+SolverUI.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+SolverUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Toggle.Name = "Toggle"
+Toggle.Parent = SolverUI
+Toggle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Toggle.BackgroundTransparency = 1.000
+Toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Toggle.BorderSizePixel = 0
+Toggle.Position = UDim2.new(0, 0, 0.959677398, 0)
+Toggle.Size = UDim2.new(0, 200, 0, 50)
+
+Off.Name = "Off"
+Off.Parent = Toggle
+Off.BackgroundColor3 = Color3.fromRGB(255, 38, 42)
+Off.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Off.BorderSizePixel = 0
+Off.Size = UDim2.new(0, 200, 0, 50)
+Off.Font = Enum.Font.SourceSans
+Off.Text = "OFF"
+Off.TextColor3 = Color3.fromRGB(0, 0, 0)
+Off.TextSize = 29.000
+
+On.Name = "On"
+On.Parent = Toggle
+On.BackgroundColor3 = Color3.fromRGB(66, 208, 0)
+On.BorderColor3 = Color3.fromRGB(0, 0, 0)
+On.BorderSizePixel = 0
+On.Size = UDim2.new(0, 200, 0, 50)
+On.Visible = false
+On.Font = Enum.Font.SourceSans
+On.Text = "ON"
+On.TextColor3 = Color3.fromRGB(0, 0, 0)
+On.TextSize = 29.000
+
+Title.Name = "Title"
+Title.Parent = Toggle
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1.000
+Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Title.BorderSizePixel = 0
+Title.Position = UDim2.new(0, 0, -1, 0)
+Title.Size = UDim2.new(0, 200, 0, 50)
+
+TextLabel.Parent = Title
+TextLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Size = UDim2.new(0, 200, 0, 50)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "AbsoluteSolver"
+TextLabel.TextColor3 = Color3.fromRGB(255, 240, 24)
+TextLabel.TextSize = 30.000
+TextLabel.TextWrapped = true
+
+-- Scripts:
+
+local function KNHCFX_fake_script() -- Off.On 
+	local script = Instance.new('LocalScript', Off)
+
+	local button = script.Parent
+	local ON = button.Parent.On
+	ABSOLUTESOLVER = _G.ABSOLUTESOLVER
+	
+	button.MouseButton1Click:Connect(function()
+		button.Visible = false
+		ON.Visible = true
+		_G.ABSOLUTESOLVER = true
+		
+	end)
+end
+coroutine.wrap(KNHCFX_fake_script)()
+local function LSVR_fake_script() -- On.Off 
+	local script = Instance.new('LocalScript', On)
+
+	local button = script.Parent
+	local OFF = button.Parent.Off
+	ABSOLUTESOLVER = _G.ABSOLUTESOLVER
+	
+	button.MouseButton1Click:Connect(function()
+		button.Visible = false
+		OFF.Visible = true
+		_G.ABSOLUTESOLVER = false
+		
+	end)
+end
+coroutine.wrap(LSVR_fake_script)()
