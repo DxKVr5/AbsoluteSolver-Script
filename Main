@@ -1,1 +1,8 @@
--- Add Content
+--// Load all scripts \\--
+loadstring(game:HttpGet(""))() -- AccessoriesHider
+loadstring(game:HttpGet(""))() -- LoadUI
+loadstring(game:HttpGet(""))() -- ActivateSolver
+loadstring(game:HttpGet(""))() -- AnimationHandler
+loadstring(game:HttpGet(""))() -- Choke Skill
+loadstring(game:HttpGet(""))() -- Fling Skill
+loadstring(game:HttpGet(""))() -- [NULL]
